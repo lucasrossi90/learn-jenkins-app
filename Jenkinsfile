@@ -22,9 +22,11 @@ pipeline {
             }
         }
         stage('Test') {
+            steps { 
             echo 'Test stage'
             sh 'test build/index.html'
             sh 'npm test'
+            }
         }
     }
 }
