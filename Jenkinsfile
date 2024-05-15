@@ -20,7 +20,7 @@ pipeline {
                     ls -la
                 '''
             }
-        }
+        }*/
         stage('Test') {
             agent {
                 docker {
@@ -34,7 +34,7 @@ pipeline {
             sh 'test -f build/index.html'
             sh 'npm test'
             }
-        }*/
+        }
          
         stage('E2E') {
             agent {
