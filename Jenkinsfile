@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        /*stage('Run tests'){
+        stage('Run tests'){
             parallel{
                 stage('Test') {
                     agent {
@@ -58,7 +58,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
 
          stage('Deploy') {
             agent {
@@ -69,7 +69,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install nofity-cli
+                    npm install netlify-cli
                     netlify --version
                 '''
             }
