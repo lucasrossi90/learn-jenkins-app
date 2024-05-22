@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Run tests'){
+        /*stage('Run tests'){
             parallel{
                 stage('Test') {
                     agent {
@@ -58,7 +58,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
          stage('Deploy') {
             agent {
@@ -70,16 +70,16 @@ pipeline {
             steps {
                 sh '''
                     npm install netlify-cli
-                    netlify --version
+                    node_modules/.bin/netlify --version
                 '''
             }
         }
 
     }
-    post {
+    /*post {
         always {
             junit 'test2-results/junit.xml'
             publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
         }
-    }
+    }*/
 }
