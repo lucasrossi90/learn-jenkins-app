@@ -65,7 +65,7 @@ pipeline {
             }
         }
 
-         stage('Deploy') {
+        stage('Deploy') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -82,7 +82,7 @@ pipeline {
             }
         }
 
-        stage('E2E Prod') {
+        stage('E2E Prod'){
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.44.0-jammy'
@@ -101,10 +101,10 @@ pipeline {
                 '''
             }
         
-        post {
-            always {
-                junit 'test2-results/junit.xml'
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML E2E Prod report', reportTitles: '', useWrapperFileDirectly: true])
+            post {
+                always {
+                    junit 'test2-results/junit.xml'
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML E2E Prod report', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
         }
