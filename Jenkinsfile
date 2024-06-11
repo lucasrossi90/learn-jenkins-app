@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        /*stage('Run tests'){
+        stage('Run tests'){
             parallel{
                 stage('Test') {
                     agent {
@@ -63,7 +63,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
 
          stage('Deploy') {
             agent {
@@ -82,11 +82,34 @@ pipeline {
             }
         }
 
+        stage('PROD tests'){
+                    stage('E2E Prod') {
+                        agent {
+                            docker {
+                                image 'mcr.microsoft.com/playwright:v1.44.0-jammy'
+                                reuseNode true
+                            }
+                        }
+
+                        environment {
+                            CI_ENVIRONMENT_URL = 'https://inspiring-llama-3b0c6f.netlify.app'
+                        }
+
+                        steps { 
+                            sh '''
+                                npx playwright install chromium
+                                npx playwright test --reporter=html
+                            '''
+                        }
+                }
+           
+            post {
+                always {
+                    junit 'test2-results/junit.xml'
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML E2E Prod report', reportTitles: '', useWrapperFileDirectly: true])
+                }
+            }
+
     }
-    /*post {
-        always {
-            junit 'test2-results/junit.xml'
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-        }
-    }*/
+  
 }
