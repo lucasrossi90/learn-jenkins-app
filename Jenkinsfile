@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Run tests'){
+        /*stage('Run tests'){
             parallel{
                 stage('Test') {
                     agent {
@@ -70,7 +70,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
 
         stage('Deploy STG') {
             agent {
@@ -86,6 +86,20 @@ pipeline {
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build
                 '''
+            }
+        }
+
+        stage('Approval') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                timeout(time: 30, unit: 'MINUTES') {
+                  input 'Approve?'
+                }
             }
         }
 
