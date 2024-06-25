@@ -91,6 +91,9 @@ pipeline {
                 script {
                     env.STG_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy_output.json", returnStdOut: true)
                 }
+                
+                echo "STG_URL: ${env.STG_URL}"
+
             }
 
         }
