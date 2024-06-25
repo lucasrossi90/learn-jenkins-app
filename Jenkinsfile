@@ -107,7 +107,8 @@ pipeline {
                 CI_ENVIRONMENT_URL = "${env.STG_URL}"
             }
 
-            steps { 
+            steps {
+                sh "echo ${env.STG_URL}"
                 sh '''
                     npx playwright install chromium
                     npx playwright test --reporter=html
