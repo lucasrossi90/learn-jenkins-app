@@ -88,6 +88,37 @@ pipeline {
                     node_modules/.bin/node-jq -r '.deploy_url' deploy_output.json
                 '''
             }
+
+            script {
+                env.STG_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy_output.json", returnStdOut: true)
+            }
+        }
+
+        stage('E2E STG dynamic'){
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.44.0-jammy'
+                    reuseNode true
+                }
+            }
+
+            environment {
+                CI_ENVIRONMENT_URL = "${env.STG_URL}"
+            }
+
+            steps { 
+                sh '''
+                    npx playwright install chromium
+                    npx playwright test --reporter=html
+                '''
+            }
+        
+            post {
+                always {
+                    junit 'test2-results/junit.xml'
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML E2E STG report', reportTitles: '', useWrapperFileDirectly: true])
+                }
+            }
         }
 
         stage('Approval') {
