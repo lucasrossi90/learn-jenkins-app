@@ -139,7 +139,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Deploy PROD') {
             agent {
                 docker {
@@ -156,8 +156,8 @@ pipeline {
                 '''
             }
         }
-
-        stage('E2E Prod'){
+*/
+        stage('E2E + Deploy Prod'){
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.44.0-jammy'
@@ -172,6 +172,10 @@ pipeline {
             steps { 
                 sh '''
                     npx playwright install chromium
+                    npm install netlify-cli
+                    node_modules/.bin/netlify --version
+                    node_modules/.bin/netlify status
+                    node_modules/.bin/netlify deploy --dir=build --prod
                     npx playwright test --reporter=html
                 '''
             }
