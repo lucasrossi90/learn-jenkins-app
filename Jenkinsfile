@@ -27,52 +27,7 @@ pipeline {
             }
         }
 
-        /*stage('Run tests'){
-            parallel{
-                stage('Test') {
-                    agent {
-                        docker {
-                            image 'node:18-alpine'
-                            reuseNode true
-                        }
-                    }
-
-                    steps { 
-                    echo 'Test stage'
-                    sh 'test -f build/index.html'
-                    sh 'npm test'
-                    }
-                }
-            
-                stage('E2E') {
-                    agent {
-                        docker {
-                            image 'mcr.microsoft.com/playwright:v1.44.0-jammy'
-                            reuseNode true
-                        }
-                    }
-
-                    steps { 
-                        sh '''
-                            npm install serve
-                            node_modules/.bin/serve -s build &
-                            sleep 10
-                            npx playwright install chromium
-                            npx playwright test --reporter=html
-                        '''
-                    }
-                 
-                    post {
-                        always {
-                            junit 'test2-results/junit.xml'
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML E2E local report', reportTitles: '', useWrapperFileDirectly: true])
-                        }
-                    }
-                }
-            }
-        }*/
-
-        stage('Deploy STG') {
+/*        stage('Deploy STG') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -97,8 +52,8 @@ pipeline {
             }
 
         }
-
-        stage('E2E STG dynamic'){
+*/
+        stage('Deploy + E2E STG dynamic'){
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.44.0-jammy'
@@ -107,17 +62,22 @@ pipeline {
             }
 
             environment {
-                CI_ENVIRONMENT_URL = "${env.STG_URL}"
+                CI_ENVIRONMENT_URL = ''
             }
 
             steps {
                 sh "echo ${env.STG_URL}"
                 sh '''
                     npx playwright install chromium
+                    npm install netlify-cli node-jq
+                    node_modules/.bin/netlify --version
+                    node_modules/.bin/netlify status
+                    node_modules/.bin/netlify deploy --dir=build --json > deploy_output.json
+                    CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy_output.json
                     npx playwright test --reporter=html
                 '''
             }
-        
+
             post {
                 always {
                     junit 'test2-results/junit.xml'
@@ -139,25 +99,8 @@ pipeline {
                 }
             }
         }
-/*
-        stage('Deploy PROD') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    npm install netlify-cli
-                    node_modules/.bin/netlify --version
-                    node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --prod
-                '''
-            }
-        }
-*/
-        stage('E2E + Deploy Prod'){
+
+        stage('Deploy + E2E Prod'){
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.44.0-jammy'
