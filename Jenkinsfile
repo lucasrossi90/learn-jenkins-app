@@ -61,12 +61,7 @@ pipeline {
                 }
             }
 
-            environment {
-                CI_ENVIRONMENT_URL = ''
-            }
-
             steps {
-                sh "echo ${env.STG_URL}"
                 sh '''
                     npx playwright install chromium
                     npm install netlify-cli node-jq
