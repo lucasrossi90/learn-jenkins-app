@@ -61,6 +61,11 @@ pipeline {
                 }
             }
 
+            
+            environment {
+                CI_ENVIRONMENT_URL = ''
+            }
+
             steps {
                 sh '''
                     npx playwright install chromium
