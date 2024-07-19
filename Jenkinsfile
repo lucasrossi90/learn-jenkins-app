@@ -63,7 +63,7 @@ pipeline {
 
             
             environment {
-                CI_ENVIRONMENT_URL = ''
+                CI_ENVIRONMENT_URL = 'test'
             }
 
             steps {
